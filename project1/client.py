@@ -18,7 +18,7 @@ def client():
     cs.connect(server_binding)
 
     # Receive data from the server
-    data_from_server = cs.recv(100)
+    data_from_server = cs.recv(128)
     print("[C]: Data received from server: {}".format(
         data_from_server.decode('utf-8')))
 
@@ -26,7 +26,7 @@ def client():
     msg_from_input = str(input())
     while msg_from_input != '':
         cs.send(msg_from_input.encode('utf-8'))
-        reversed_str_from_server = cs.recv(100)
+        reversed_str_from_server = cs.recv(1024)
         print("[C]: Reversed message received from server: {}".format(
             reversed_str_from_server.decode('utf-8')))
         msg_from_input = str(input())

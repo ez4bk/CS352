@@ -23,13 +23,13 @@ def server():
     msg = "Welcome to CS 352!"
     csockid.send(msg.encode('utf-8'))
 
-    recv_msg_from_client = csockid.recv(10000).decode('utf-8')
+    recv_msg_from_client = csockid.recv(1024).decode('utf-8')
     while recv_msg_from_client != "":
         print("[S]: String recevied from client: %s" % recv_msg_from_client)
         reversed_msg = recv_msg_from_client[::-1]
         print("[S]: Sending reversed string: %s" % reversed_msg)
         csockid.send(reversed_msg.encode('utf-8'))
-        recv_msg_from_client = csockid.recv(10000).decode('utf-8')
+        recv_msg_from_client = csockid.recv(1024).decode('utf-8')
 
     print("[S]: Empty input is detected, connection closed.")
 
