@@ -24,16 +24,19 @@ def server():
     csockid.send(msg.encode('utf-8'))
 
     recv_msg_from_client = csockid.recv(1024).decode('utf-8')
+    f = open('out-proj.txt', 'w')
+    f.close()
     while recv_msg_from_client != "":
-        print("[S]: String recevied from client: %s" % recv_msg_from_client)
         reversed_msg = recv_msg_from_client[::-1]
-        print("[S]: Sending reversed string: %s" % reversed_msg)
-        f = open('out-proj.txt','w')
-        f.writelines(reversed_msg)
+        print("[S]: Reversing '%s' to: '%s'" %
+              (recv_msg_from_client, reversed_msg))
+        f = open('out-proj.txt', 'a')
+        f.write(reversed_msg + '\n')
         csockid.send(reversed_msg.encode('utf-8'))
         recv_msg_from_client = csockid.recv(1024).decode('utf-8')
+    f.close()
 
-    print("[S]: Empty input is detected, connection closed.")
+    print("[S]: Empty line is detected, connection closed.")
 
     # Close the server socket
     ss.close()
