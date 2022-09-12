@@ -19,17 +19,22 @@ def server():
     csockid, addr = ss.accept()
     print("[S]: Got a connection request from a client at {}".format(addr))
 
-    # send a intro message to the client.
+    # Send a intro message to the client.
     msg = "Welcome to CS 352!"
     csockid.send(msg.encode('utf-8'))
 
+    # Receive text from the client
     recv_msg_from_client = csockid.recv(1024).decode('utf-8')
+    # Create a new file or rewrite everything from the beginning
     f = open('out-proj.txt', 'w')
     f.close()
+
+    # Receive text from the client
     while recv_msg_from_client != "":
-        reversed_msg = recv_msg_from_client[::-1]
+        reversed_msg = recv_msg_from_client[::-1]   # Reverse the text
         print("[S]: Reversing '%s' to: '%s'" %
               (recv_msg_from_client, reversed_msg))
+        # Append the text to the file
         f = open('out-proj.txt', 'a')
         f.write(reversed_msg + '\n')
         csockid.send(reversed_msg.encode('utf-8'))

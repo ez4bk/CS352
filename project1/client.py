@@ -1,5 +1,4 @@
 import socket
-import re
 
 
 def client():
@@ -14,7 +13,7 @@ def client():
     port = 50007
     localhost_addr = socket.gethostbyname(socket.gethostname())
 
-    # connect to the server on local machine
+    # Connect to the server on local machine
     server_binding = (localhost_addr, port)
     cs.connect(server_binding)
 
@@ -23,27 +22,19 @@ def client():
     print("[C]: Data received from server: {}".format(
         data_from_server.decode('utf-8')))
 
-    #print("[C]: Input string below to get reversed, enter nothing to stop")
-    #msg_from_input = str(input())
-    # while msg_from_input != '':
-    # cs.send(msg_from_input.encode('utf-8'))
-    #reversed_str_from_server = cs.recv(1024)
-    # print("[C]: Reversed message received from server: {}".format(
-    # reversed_str_from_server.decode('utf-8')))
-    #msg_from_input = str(input())
-
-    #print("[C]: Empty input is detected, connection closed.")
-
+    # Read lines from the text file
     f = open('in-proj.txt', 'r')
     lines = f.readlines()
+    # Send each line to the server
     for line in lines:
-        line = line.strip('\n')
+        line = line.strip('\n')  # get rid of \n in the end
         cs.send(line.encode('utf-8'))
         reversed_str_from_server = cs.recv(1024)
         print(reversed_str_from_server.decode('utf-8'))
     f.close()
+    print("Done")
 
-    # close the client socket
+    # Close the client socket
     cs.close()
     exit()
 
