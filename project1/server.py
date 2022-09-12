@@ -28,6 +28,8 @@ def server():
         print("[S]: String recevied from client: %s" % recv_msg_from_client)
         reversed_msg = recv_msg_from_client[::-1]
         print("[S]: Sending reversed string: %s" % reversed_msg)
+        f = open('out-proj.txt','w')
+        f.writelines(reversed_msg)
         csockid.send(reversed_msg.encode('utf-8'))
         recv_msg_from_client = csockid.recv(1024).decode('utf-8')
 

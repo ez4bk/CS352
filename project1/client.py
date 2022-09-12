@@ -1,4 +1,5 @@
 import socket
+import re
 
 
 def client():
@@ -22,16 +23,25 @@ def client():
     print("[C]: Data received from server: {}".format(
         data_from_server.decode('utf-8')))
 
-    print("[C]: Input string below to get reversed, enter nothing to stop")
-    msg_from_input = str(input())
-    while msg_from_input != '':
-        cs.send(msg_from_input.encode('utf-8'))
-        reversed_str_from_server = cs.recv(1024)
-        print("[C]: Reversed message received from server: {}".format(
-            reversed_str_from_server.decode('utf-8')))
-        msg_from_input = str(input())
+    #print("[C]: Input string below to get reversed, enter nothing to stop")
+    #msg_from_input = str(input())
+    #while msg_from_input != '':
+        #cs.send(msg_from_input.encode('utf-8'))
+        #reversed_str_from_server = cs.recv(1024)
+        #print("[C]: Reversed message received from server: {}".format(
+            #reversed_str_from_server.decode('utf-8')))
+        #msg_from_input = str(input())
 
-    print("[C]: Empty input is detected, connection closed.")
+    #print("[C]: Empty input is detected, connection closed.")
+    
+    f = open('in-proj.txt','r')
+    while True:
+        line = f.readline()
+        if line:
+            cs.send(line.encode('utf-8'))
+            reversed_str_from_server = cs.recv(1024)
+            print(reversed_str_from_server.decode('utf-8'))
+    file.close()
 
     # close the client socket
     cs.close()
