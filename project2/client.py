@@ -13,7 +13,6 @@ def client():
         print('socket open error: {} \n'.format(err))
         exit()
 
-    # Define the port on which you want to connect to the server
     argv = sys.argv[1:]
     assert len(argv) == 2, 'You need to have at least two arguments'
     hostname = socket.gethostbyname(argv[0])
@@ -23,14 +22,9 @@ def client():
         print(e)
         exit()
 
-    # Connect to the server on local machine
+    # Connect to the server
     server_binding = (hostname, port)
     cs.connect(server_binding)
-
-    # Receive data from the server
-    # hello_msg = cs.recv(256)
-    # print("[C]: Data received from server: {}".format(
-    #     hello_msg.decode('utf-8')))
 
     # Read lines from the text file
     hns_f = open('PROJ2-HNS.txt', 'r')
@@ -56,7 +50,6 @@ def client():
     for r in responses:
         resolved_f = open('out-proj.txt', 'a')
         resolved_f.write(str(r)+'\n')
-        # Close the client socket
     resolved_f.close()
 
     exit()

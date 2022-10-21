@@ -59,5 +59,5 @@ def server():
 
 
 if __name__ == "__main__":
-    t2 = threading.Thread(name='server', target=server)
+    t2 = threading.Thread(name='ts1', target=server)
     t2.start()
