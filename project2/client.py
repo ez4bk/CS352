@@ -1,5 +1,6 @@
 import socket
 import sys
+from urllib import response
 
 responses = []
 
@@ -27,23 +28,28 @@ def client():
     cs.connect(server_binding)
 
     # Receive data from the server
-    hello_msg = cs.recv(256)
-    print("[C]: Data received from server: {}".format(
-        hello_msg.decode('utf-8')))
+    # hello_msg = cs.recv(256)
+    # print("[C]: Data received from server: {}".format(
+    #     hello_msg.decode('utf-8')))
 
     # Read lines from the text file
     hns_f = open('PROJ2-HNS.txt', 'r')
     domain_names = hns_f.readlines()
+    hns_f.close()
+
     # Send each line to the server
     for domain_name in domain_names:
         domain_name = domain_name.strip('\n')  # get rid of \n in the end
+        print(domain_name)
         cs.send(domain_name.encode('utf-8'))
-        ip_addr = cs.recv(256).decode('utf-8').strip('\n')
-        response = "{0}\t{1}\tA\tIN".format(domain_name, ip_addr)
+        response = cs.recv(256).decode('utf-8').strip('\n')
         responses.append(response)
         print("[C]: " + response)
-    hns_f.close()
 
+    cs.send("EOF".encode('utf-8'))
+    cs.close()
+
+    # Write results into file
     resolved_f = open('out-proj.txt', 'w')
     resolved_f.close()
 
@@ -53,7 +59,6 @@ def client():
         # Close the client socket
     resolved_f.close()
 
-    cs.close()
     exit()
 
 
