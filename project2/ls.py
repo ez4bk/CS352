@@ -10,7 +10,7 @@ def ls():
     try:
         cs1 = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         cs2 = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        print("[C]: Client socket created")
+        print("[LS]: Client socket created")
         ss = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     except socket.error as err:
         print('socket open error: {} \n'.format(err))
@@ -33,11 +33,11 @@ def ls():
     ss.bind(server_binding3)
     ss.listen(1)
     host = socket.gethostname()
-    print("[S]: Server host name is {}".format(host))
+    print("[LS]: Server host name is {}".format(host))
     localhost_ip = (socket.gethostbyname(host))
-    print("[S]: Server IP address is {}".format(localhost_ip))
+    print("[LS]: Server IP address is {}".format(localhost_ip))
     csockid, addr = ss.accept()
-    print("[S]: Got a connection request from a client at {}".format(addr))
+    print("[LS]: Got a connection request from a client at {}".format(addr))
     input = [cs1, cs2]
 
     # Receive data from the server
@@ -50,19 +50,19 @@ def ls():
             cs1.send('EOF'.encode('utf-8'))
             cs2.send('EOF'.encode('utf-8'))
             break
-        print("Client: " + query)
+        print("[LS]: Client Query: " + query)
         cs1.send(query.encode('utf-8'))
         cs2.send(query.encode('utf-8'))
         inputready, outputready, exceptready = select.select(
             input, [], [], 5.0)
         if exceptready != []:
-            print("Error")
+            print("[LS]: Error")
             exit()
         if inputready != []:
             s = inputready[0]
             data = s.recv(256)
             response = data.decode('utf-8')
-            print("TS " + response)
+            print("[LS]: TS Response: " + response)
             csockid.send(response.encode('utf-8'))
         else:
             response = query + " - TIMED OUT\n"

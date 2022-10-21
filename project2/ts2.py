@@ -5,12 +5,12 @@ import signal
 import time
 
 
-def server():
+def ts2():
     try:
         ss = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        print("[S]: Server socket created")
+        print("[TS2]: Server socket created")
     except socket.error as err:
-        print('socket open error: {}\n'.format(err))
+        print('[TS2]: socket open error: {}\n'.format(err))
         exit()
 
     dns_ip = {}
@@ -20,20 +20,19 @@ def server():
         for line in f:
             line = line.strip('\n')
             split_line = line.split(" ")
-            lower_key = split_line[0].lower()
-            dns_ip[lower_key] = split_line[1]
-            dns_type[lower_key] = split_line[2]
+            dns_ip[split_line[0]] = split_line[1]
+            dns_type[split_line[0]] = split_line[2]
 
     port_num = int(sys.argv[1])
     server_binding = ('',  port_num)
     ss.bind(server_binding)
     ss.listen(1)
     host = socket.gethostname()
-    print("[S]: Server host name is {}".format(host))
+    print("[TS2]: Server host name is {}".format(host))
     localhost_ip = (socket.gethostbyname(host))
-    print("[S]: Server IP address is {}".format(localhost_ip))
+    print("[TS2]: Server IP address is {}".format(localhost_ip))
     csockid, addr = ss.accept()
-    print("[S]: Got a connection request from a client at {}".format(addr))
+    print("[TS2]: Got a connection request from a client at {}".format(addr))
     counter = 1
     while counter == 1:
         if csockid.fileno() == -1:
@@ -44,20 +43,19 @@ def server():
         if query:
             for key in dns_ip:
                 print(
-                    "Matching query {0} with {1} in the table".format(query, key))
-                if key == query:
-                    result_string = query + " " + \
+                    "[TS2]: Matching query {0} with {1} in the table".format(query, key))
+                if key.lower() == query.lower():
+                    result_string = key + " " + \
                         dns_ip[key] + " " + dns_type[key] + " IN"
-                    print("Result is " + result_string)
+                    print("[TS2]: Matched! Result is " + result_string)
                     csockid.send(result_string.encode('utf-8'))
                     break
                 else:
-                    print("Not macthed")
+                    print("[TS2]: Not macthed")
 
     ss.close()
     exit()
 
 
 if __name__ == "__main__":
-    t2 = threading.Thread(name='ts2', target=server)
-    t2.start()
+    ts2()
