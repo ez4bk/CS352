@@ -10,11 +10,11 @@ def client():
         cs = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         print("[C]: Client socket created")
     except socket.error as err:
-        print('socket open error: {} \n'.format(err))
+        print('[C]: socket open error: {} \n'.format(err))
         exit()
 
     argv = sys.argv[1:]
-    assert len(argv) == 2, 'You need to have at least two arguments'
+    assert len(argv) == 2, '[C]: You need to have at least two arguments'
     hostname = socket.gethostbyname(argv[0])
     try:
         port = int(argv[1])
@@ -34,7 +34,7 @@ def client():
     # Send each line to the server
     for domain_name in domain_names:
         domain_name = domain_name.strip('\n')  # get rid of \n in the end
-        print(domain_name)
+        print("[C]: Querying " + domain_name)
         cs.send(domain_name.encode('utf-8'))
         response = cs.recv(256).decode('utf-8').strip('\n')
         responses.append(response)
