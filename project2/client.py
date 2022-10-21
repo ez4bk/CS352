@@ -16,7 +16,7 @@ def client():
     # Define the port on which you want to connect to the server
     argv = sys.argv[1:]
     assert len(argv) == 2, 'You need to have at least two arguments'
-    hostname = argv[0]
+    hostname = socket.gethostbyname(argv[0])
     try:
         port = int(argv[1])
     except Exception as e:
