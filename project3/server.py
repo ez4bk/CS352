@@ -16,7 +16,7 @@ sock = socket.socket()
 sock.bind(('', port))
 sock.listen(2)
 
-### Contents of pages we will serve.
+# Contents of pages we will serve.
 # Login form
 login_form = """
    <form action = "http://localhost:%d" method = "post">
@@ -43,20 +43,26 @@ success_page = """
    <h1>Your secret data is here:</h1>
 """ % port
 
-#### Helper functions
+# Helper functions
 # Printing.
+
+
 def print_value(tag, value):
-    print "Here is the", tag
-    print "\"\"\""
-    print value
-    print "\"\"\""
-    print
+    print("Here is the " + str(tag))
+    print("\"\"\"")
+    print(str(value))
+    print("\"\"\"")
+    print()
 
 # Signal handler for graceful exit
+
+
 def sigint_handler(sig, frame):
     print('Finishing up by closing listening socket...')
     sock.close()
     sys.exit(0)
+
+
 # Register the signal handler
 signal.signal(signal.SIGINT, sigint_handler)
 
@@ -66,12 +72,11 @@ signal.signal(signal.SIGINT, sigint_handler)
 # Read secret data of all the users
 
 
-
-
-### Loop to accept incoming HTTP connections and respond.
+# Loop to accept incoming HTTP connections and respond.
 while True:
     client, addr = sock.accept()
-    req = client.recv(1024)
+    req = client.recv(1024).decode("utf-8")
+    print(req)
 
     # Let's pick the headers and entity body apart
     header_body = req.split('\r\n\r\n')
@@ -92,23 +97,23 @@ while True:
     # html_content_to_send = success_page + <secret>
     # html_content_to_send = bad_creds_page
     # html_content_to_send = logout_page
-    
+
     # (2) `headers_to_send` => add any additional headers
     # you'd like to send the client?
     # Right now, we don't send any extra headers.
     headers_to_send = ''
 
     # Construct and send the final response
-    response  = 'HTTP/1.1 200 OK\r\n'
+    response = 'HTTP/1.1 200 OK\r\n'
     response += headers_to_send
     response += 'Content-Type: text/html\r\n\r\n'
     response += html_content_to_send
-    print_value('response', response)    
-    client.send(response)
+    print_value('response', response)
+    client.send(response.encode('utf-8'))
     client.close()
-    
-    print "Served one request/connection!"
-    print
+
+    print("Served one request/connection!")
+    print()
 
 # We will never actually get here.
 # Close the listening socket
