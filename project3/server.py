@@ -1,7 +1,9 @@
+import secrets
 import socket
 import signal
 import sys
 import random
+import json
 
 # Read a command line argument for the port where the server
 # must run.
@@ -48,7 +50,7 @@ success_page = """
 
 
 def print_value(tag, value):
-    print("Here is the " + str(tag))
+    print("Here is the", str(tag))
     print("\"\"\"")
     print(str(value))
     print("\"\"\"")
@@ -69,7 +71,25 @@ signal.signal(signal.SIGINT, sigint_handler)
 
 # TODO: put your application logic here!
 # Read login credentials for all the users
+user_f = open('passwords.txt', 'r')
+users = user_f.readlines()
+user_f.close()
+user_pwd_database = {}
+for user in users:
+    user = user.strip('\n')
+    user_info = user.split(' ')
+    user_pwd_database[user_info[0]] = user_info[1]
+print(user_pwd_database)
 # Read secret data of all the users
+secret_f = open('secrets.txt', 'r')
+secrets = secret_f.readlines()
+secret_f.close()
+user_secret_database = {}
+for secret in secrets:
+    secret = secret.strip('\n')
+    secret_info = secret.split(' ')
+    user_secret_database[secret_info[0]] = secret_info[1]
+print(user_secret_database)
 
 
 # Loop to accept incoming HTTP connections and respond.
@@ -86,16 +106,29 @@ while True:
     print_value('entity body', body)
 
     # TODO: Put your application logic here!
-    # Parse headers and body and perform various actions
-
-    # You need to set the variables:
-    # (1) `html_content_to_send` => add the HTML content you'd
-    # like to send to the client.
     # Right now, we just send the default login page.
     html_content_to_send = login_page
     # But other possibilities exist, including
-    # html_content_to_send = success_page + <secret>
-    # html_content_to_send = bad_creds_page
+    if body != '':
+        login_string = body.split('&')
+        username_string = login_string[0].split('=')
+        password_string = login_string[1].split('=')
+        login_info = {
+            username_string[0]: username_string[1],
+            password_string[0]: password_string[1]
+        }
+        print(login_info)
+        if login_info['username'] in user_pwd_database.keys():
+            if user_pwd_database[login_info['username']] == login_info['password']:
+                print(True)
+                html_content_to_send = success_page + \
+                    "<br/>{0}<br/>".format(
+                        user_secret_database[login_info['username']])
+            else:
+                html_content_to_send = bad_creds_page
+        else:
+            html_content_to_send = bad_creds_page
+
     # html_content_to_send = logout_page
 
     # (2) `headers_to_send` => add any additional headers
