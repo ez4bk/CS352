@@ -92,7 +92,7 @@ for secret in secrets:
 print(user_secret_database)
 
 cookie_jar = {}
-
+cookie_flag = False
 # Loop to accept incoming HTTP connections and respond.
 while True:
     client, addr = sock.accept()
@@ -117,28 +117,26 @@ while True:
     if result == -1:
         html_content_to_send = login_page
         headers_to_send = ''
+        cookie_flag = False
     else:
-        cookie_token = headers[result+6:]
-        print(str(cookie_jar))
+        cookie_token = str(headers[result+6:]).split('\r')[0]
         if cookie_jar.get(cookie_token) != None:
-            print(">>>>>>>good cookie " + cookie_token)
             html_content_to_send = success_page + \
                 "<br/>{0}<br/>".format(
                     user_secret_database[cookie_jar[cookie_token]])
-            if body == 'action=logout':
-                print(">>>>>logged out")
-                headers_to_send = 'Set-Cookie: token=; expires=Thu, 01 Jan 1970 00:00:00 GMT\r\n'
-                html_content_to_send = logout_page
+            cookie_flag = True
         else:
             print(">>>>>>bad cookie " + cookie_token)
             html_content_to_send = bad_creds_page
+            cookie_flag = False
+
+    if body == 'action=logout':
+        print(">>>>>logged out")
+        headers_to_send = 'Set-Cookie: token=; expires=Thu, 01 Jan 1970 00:00:00 GMT\r\n'
+        html_content_to_send = logout_page
     # Body is not empty, POST and handle login information
-    if body != '':
-        if body == 'action=logout':
-            print(">>>>>logged out")
-            headers_to_send = 'Set-Cookie: token=; expires=Thu, 01 Jan 1970 00:00:00 GMT\r\n'
-            html_content_to_send = logout_page
-        else:
+    if not cookie_flag:
+        if body != '':
             login_string = body.split('&')
             username_string = login_string[0].split('=')
             password_string = login_string[1].split('=')
